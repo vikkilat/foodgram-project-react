@@ -1,9 +1,11 @@
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                            ShoppingCart, Tag)
+
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.validators import UniqueTogetherValidator
+
+from recipes.models import (Favorite, Ingredient, IngredientAmount, Recipe,
+                            ShoppingCart, Tag)
 from users.models import User
 
 
@@ -148,7 +150,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             'name', 'image', 'text', 'cooking_time',)
 
     def validate_ingredients(self, data):
-        ingredients = self.initial_data.get('ingredients')
+        ingredients = data['ingredients']
         ingredients_list = []
         if not ingredients:
             raise serializers.ValidationError(
@@ -176,12 +178,14 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 )
 
     def create_ingredient_amount(self, ingredients, recipe):
-        for ingredient in ingredients:
-            IngredientAmount.objects.get_or_create(
-                recipe=recipe,
+        IngredientAmount.objects.bulk_create([
+            IngredientAmount(
                 ingredient=ingredient['id'],
+                recipe=recipe,
                 amount=ingredient['amount']
             )
+            for ingredient in ingredients
+        ])
 
     def create(self, validated_data):
         author = self.context.get('request').user
