@@ -13,7 +13,6 @@ from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAuthorOrReadOnly
 from api.serializers import (FollowSerializer, IngredientSerializer,
                              RecipeSerializer, TagSerializer, UsersSerializer)
-
 from recipes.models import (Favorite, Follow, Ingredient, IngredientAmount,
                             Recipe, ShoppingCart, Tag)
 from users.models import User
@@ -120,8 +119,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def favorite(self, request, id):
         if request.method == 'POST':
             return self.recipe_add(Favorite, request, id)
-        else:
-            return self.recipe_delete(Favorite, request, id)
+        return self.recipe_delete(Favorite, request, id)
 
     @action(
             detail=True,
@@ -131,8 +129,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def shopping_cart(self, request, id):
         if request.method == 'POST':
             return self.recipe_add(ShoppingCart, request, id)
-        else:
-            return self.recipe_delete(ShoppingCart, request, id)
+        return self.recipe_delete(ShoppingCart, request, id)
 
     @action(
         detail=False,

@@ -2,6 +2,7 @@ import csv
 import os
 
 from django.conf import settings
+
 from recipes.models import Ingredient
 
 FILE_DIR = os.path.join(settings.BASE_DIR, 'data')
