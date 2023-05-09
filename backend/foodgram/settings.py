@@ -117,4 +117,12 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 }
 
+DJOSER = {
+    'SERIALIZERS': {
+        'user': 'api.serializers.UsersSerializer',
+        'current_user': 'api.serializers.UsersSerializer',
+    },
+    'HIDE_USERS': False,
+}
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

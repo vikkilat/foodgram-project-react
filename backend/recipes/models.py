@@ -13,7 +13,7 @@ class Ingredient(models.Model):
         max_length=100,
         verbose_name='Название ингредиента'
     )
-    unit = models.CharField(
+    measurement_unit = models.CharField(
         max_length=50,
         verbose_name='Единица измерения'
     )
@@ -24,7 +24,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name}, {self.unit}'
+        return f'{self.name} {self.measurement_unit}'
 
 
 class Tag(models.Model):

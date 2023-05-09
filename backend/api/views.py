@@ -107,7 +107,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
         serializer = RecipeSerializer(recipe)
-        # serializer.is_valid(raise_exception=True)
         if not model.objects.filter(recipe=recipe, user=user).exists():
             model.objects.create(recipe=recipe, user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -151,7 +150,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = IngredientAmount.objects.filter(
             recipe__shopping_cart__user=user).values(
             'ingredient__name',
-            'ingredient__unit').annotate(
+            'ingredient__measurement_unit').annotate(
             amount=Sum('amount')
         )
         data = []
@@ -159,7 +158,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             data.append(
                 f'{ingredient["ingredient__name"]} - '
                 f'{ingredient["amount"]} '
-                f'{ingredient["ingredient__unit"]}'
+                f'{ingredient["ingredient__measurement_unit"]}'
             )
         content = 'Список покупок:\n\n' + '\n'.join(data)
         filename = 'shopping_cart.txt'
