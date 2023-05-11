@@ -79,17 +79,26 @@ class RecipeInfoSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """Сериализатор для отображения ингредиентов в рецепте."""
-
-    id = serializers.IntegerField()
-    name = serializers.ReadOnlyField(source='ingredient.name')
+    id = serializers.ReadOnlyField(
+        source='ingredient.id')
+    name = serializers.ReadOnlyField(
+        source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
-        source='ingredient.measurement_unit'
-    )
+        source='ingredient.measurement_unit')
 
     class Meta:
         model = IngredientAmount
-        fields = ('id', 'name', 'measurement_unit', 'amount',)
+        fields = (
+            'id', 'name', 'measurement_unit', 'amount')
+
+
+class IngredientsEditSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'amount')
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -97,7 +106,10 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     tags = TagSerializer(many=True, read_only=True)
     author = UsersSerializer(read_only=True)
-    ingredients = serializers.SerializerMethodField()
+    ingredients = RecipeIngredientSerializer(
+        many=True,
+        required=True,
+        source='recipe')
     image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
@@ -132,7 +144,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
     """ Сериализатор для создания рецепта """
-    ingredients = RecipeIngredientSerializer(
+    ingredients = IngredientsEditSerializer(
         many=True,
         required=True
     )
@@ -202,11 +214,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, recipe, validated_data):
-        if 'ingredients' in self.initial_data:
+        if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
             recipe.ingredients.clear()
+            print(ingredients)
             self.create_ingredient_amount(ingredients, recipe)
-        if 'tags' in self.initial_data:
+        if 'tags' in validated_data:
             tags_data = validated_data.pop('tags')
             recipe.tags.set(tags_data)
         return super().update(recipe, validated_data)

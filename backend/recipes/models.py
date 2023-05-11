@@ -7,15 +7,13 @@ from users.models import User
 
 
 class Ingredient(models.Model):
-    """Модель ингредиентов."""
-
     name = models.CharField(
-        max_length=100,
-        verbose_name='Название ингредиента'
+        'Название ингредиента',
+        max_length=200,
     )
     measurement_unit = models.CharField(
-        max_length=50,
-        verbose_name='Единица измерения'
+        'Единица измерения',
+        max_length=200,
     )
 
     class Meta:
@@ -24,7 +22,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name} {self.measurement_unit}'
+        return f'{self.name}, {self.measurement_unit}.'
 
 
 class Tag(models.Model):
@@ -133,12 +131,9 @@ class IngredientAmount(models.Model):
         constraints = [
             UniqueConstraint(
                 fields=['ingredient', 'recipe'],
-                name='unique_recipe',
+                name='unique_ingredient',
             ),
         ]
-
-    def __str__(self):
-        return f'{self.amount} {self.ingredient.name}'
 
 
 class Favorite(models.Model):

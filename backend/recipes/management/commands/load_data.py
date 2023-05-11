@@ -20,9 +20,12 @@ class Command(BaseCommand):
             reader = csv.reader(file)
             next(reader)
             for row in reader:
-                name, unit = row
+                name, measurement_unit = row
                 try:
-                    Ingredient.objects.create(name=name, unit=unit)
+                    Ingredient.objects.create(
+                        name=name,
+                        measurement_unit=measurement_unit
+                    )
                 except IntegrityError:
                     self.stdout.write(
                         f'Ингредиент {name} уже существует в базе данных'
